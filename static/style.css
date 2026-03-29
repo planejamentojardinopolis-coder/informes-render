@@ -75,3 +75,60 @@ footer {
     font-size: 12px;
     color: #666;
 }
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    max-width: 180px;
+    height: auto;
+}
+.buttons {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.button {
+    display: block;
+    padding: 24px;              /* DOBRO da altura anterior */
+    text-align: center;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #ffffff;
+}
+
+.button-blue {
+    background-color: #005baa;
+}
+
+.button-blue:hover {
+    background-color: #021f3b;
+}
+
+.button-orange {
+    background-color: #f37a0a;
+}
+
+.button-orange:hover {
+    background-color: #e45d1f;
+}
+
+.back {
+    margin-top: 25px;
+    text-align: center;
+}
+.survey-text {
+    text-align: center;
+    margin: 20px 0;
+    color: #333;
+}
+
+.survey-text p {
+    margin: 6px 0;
+    font-size: 14px;
+}

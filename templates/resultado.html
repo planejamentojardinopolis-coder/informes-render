@@ -2,12 +2,18 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Informe Disponível</title>
+    <title>Informe disponível</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
 <div class="container">
+
+    <!-- LOGO -->
+    <div class="logo">
+        <img src="/static/logo-prefeitura.png" alt="Prefeitura Municipal">
+    </div>
+
     <h1>Informe de Rendimentos</h1>
 
     <p>
@@ -15,15 +21,40 @@
     </p>
 
     <p>
-        Seu informe de rendimentos está disponível para download.
+        Seu informe de rendimentos está disponível.
     </p>
 
-    <a href="{{DOWNLOAD_URL}}" class="button">
+    <!-- BOTÕES -->
+    <div class="buttons">
+
+    <!-- BOTÃO AZUL: DOWNLOAD -->
+    <a href="{{DOWNLOAD_URL}}" class="button button-blue">
         Baixar informe (PDF)
     </a>
 
-    <br><br>
+    <!-- TEXTO DA PESQUISA -->
+    <div class="survey-text">
+        <p>
+            <strong>
+                Pesquisa sobre Valorização, Capacitação e Bem‑Estar dos Servidores Municipais
+            </strong>
+        </p>
+        <p>
+            Sua opinião é muito importante para o aprimoramento das políticas voltadas aos servidores.
+            Convidamos você a participar respondendo à pesquisa abaixo.
+        </p>
+    </div>
 
+    <!-- BOTÃO LARANJA: PESQUISA -->
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLScjgyrKVRYGOUF9AKYS0qy488bGZc1kf-r0T0a4gxjlkQ8iQA/viewform"
+       class="button button-orange"
+       target="_blank">
+        Responder pesquisa
+    </a>
+
+</div>
+
+<div class="back">
     <a href="/">Voltar</a>
 </div>
 
