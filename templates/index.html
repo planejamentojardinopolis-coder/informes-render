@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Informe de Rendimentos</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Informe de Rendimentos</h1>
+
+    <p>
+        Informe os dados abaixo para acessar seu informe de rendimentos.
+    </p>
+
+    <form method="post" action="/consultar">
+        <label for="cpf">CPF</label>
+        <input type="text" id="cpf" name="cpf" placeholder="Somente números" required>
+
+        <label for="dado">Dado de confirmação</label>
+        <input type="password" id="dado" name="dado" required>
+
+        <button type="submit">Consultar</button>
+    </form>
+</div>
+
+<footer>
+    <p>Prefeitura Municipal – Sistema de Informes</p>
+</footer>
+
+</body>
+</html>
