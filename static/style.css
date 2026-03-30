@@ -1,80 +1,31 @@
+/* =============================
+   RESET E BASE
+============================= */
 * {
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
 }
 
-body {
-    background-color: #f2f2f2;
+html, body {
+    width: 100%;
     margin: 0;
     padding: 0;
-}
-
-.container {
-    max-width: 420px;
-    margin: 40px auto;
     background: #ffffff;
-    padding: 30px;
-    border-radius: 6px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.08);
 }
 
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
+/* =============================
+   MOBILE FIRST (FULL WIDTH)
+============================= */
+.container {
+    width: 100vw;          /* largura REAL da tela */
+    min-height: 100vh;
+    padding: 16px;
+    background: #ffffff;
 }
 
-p {
-    text-align: center;
-}
-
-form label {
-    display: block;
-    margin-top: 15px;
-    font-weight: bold;
-}
-
-form input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 20px;
-    background-color: #005baa;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #004080;
-}
-
-.button {
-    display: block;
-    text-align: center;
-    padding: 12px;
-    background-color: #28a745;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-}
-
-.button:hover {
-    background-color: #218838;
-}
-
-footer {
-    margin-top: 40px;
-    text-align: center;
-    font-size: 12px;
-    color: #666;
-}
+/* =============================
+   LOGO
+============================= */
 .logo {
     text-align: center;
     margin-bottom: 20px;
@@ -84,21 +35,74 @@ footer {
     max-width: 180px;
     height: auto;
 }
+
+/* =============================
+   TEXTO
+============================= */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+p {
+    text-align: center;
+    font-size: 15px;
+}
+
+label {
+    font-size: 15px;
+}
+
+/* =============================
+   FORMULÁRIO
+============================= */
+form label {
+    display: block;
+    margin-top: 16px;
+    font-weight: bold;
+}
+
+form input {
+    width: 100%;
+    padding: 16px;
+    margin-top: 6px;
+    font-size: 16px; /* evita zoom automático no iPhone */
+}
+
+/* =============================
+   BOTÃO CONSULTAR
+============================= */
+button {
+    width: 100%;
+    padding: 20px;
+    margin-top: 24px;
+    background-color: #005baa;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* =============================
+   TELA DE RESULTADO
+============================= */
 .buttons {
-    margin-top: 25px;
+    margin-top: 30px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
 }
 
 .button {
-    display: block;
-    padding: 24px;              /* DOBRO da altura anterior */
+    width: 100%;
+    padding: 26px;
     text-align: center;
     text-decoration: none;
     border-radius: 6px;
+    font-size: 18px;
     font-weight: bold;
-    font-size: 16px;
     color: #ffffff;
 }
 
@@ -106,29 +110,52 @@ footer {
     background-color: #005baa;
 }
 
-.button-blue:hover {
-    background-color: #021f3b;
-}
-
 .button-orange {
-    background-color: #f37a0a;
+    background-color: #f39c12;
 }
 
-.button-orange:hover {
-    background-color: #e45d1f;
-}
-
-.back {
-    margin-top: 25px;
-    text-align: center;
-}
+/* =============================
+   TEXTO DA PESQUISA
+============================= */
 .survey-text {
+    margin: 16px 0;
     text-align: center;
-    margin: 20px 0;
-    color: #333;
 }
 
 .survey-text p {
-    margin: 6px 0;
     font-size: 14px;
+}
+
+/* =============================
+   VOLTAR
+============================= */
+.back {
+    margin-top: 30px;
+    text-align: center;
+}
+
+/* =============================
+   FOOTER
+============================= */
+footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+}
+
+/* =============================
+   DESKTOP (SÓ AQUI LIMITA)
+============================= */
+@media (min-width: 768px) {
+
+    body {
+        background: #f2f2f2;
+    }
+
+    .container {
+        max-width: 480px;
+        margin: 30px auto;
+        box-shadow: 0 0 10px rgba(0,0,0,0.08);
+    }
 }
