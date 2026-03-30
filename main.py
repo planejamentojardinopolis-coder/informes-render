@@ -33,4 +33,73 @@ try:
     with open(CSV_PATH, newline="", encoding="latin-1", errors="ignore") as f:
         reader = csv.DictReader(f, delimiter=";")
         for row in reader:
-            cpf = row["cpf"].strip()
+            cpf = row.get("cpf", "").strip()
+            dado_confirmacao = row.get("dado_confirmacao", "").strip()
+            nome = row.get("nome", "").strip()
+
+            if cpf:
+                dados[cpf] = {
+                    "dado": dado_confirmacao,
+                    "nome": nome
+                }
+except Exception as e:
+    print(f"⚠️ Erro ao carregar CSV: {e}")
+
+# ==========================
+# Health check (HEAD /)
+# ==========================
+@app.head("/")
+def healthcheck():
+    return Response(status_code=200)
+
+# ==========================
+# Home
+# ==========================
+@app.get("/", response_class=HTMLResponse)
+def home(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "index.html",
+        {"request": request}
+    )
+
+# ==========================
+# Consulta
+# ==========================
+@app.post("/consultar", response_class=HTMLResponse)
+def consultar(
+    request: Request,
+    cpf: str = Form(...),
+    dado: str = Form(...)
+):
+    cpf = cpf.replace(".", "").replace("-", "").strip()
+    dado = dado.strip()
+
+    if cpf not in dados or dados[cpf]["dado"] != dado:
+        return HTMLResponse("<h3>Dados inválidos</h3>", status_code=403)
+
+    return templates.TemplateResponse(
+        request,
+        "resultado.html",
+        {
+            "request": request,
+            "nome": dados[cpf]["nome"],
+            "download_url": f"/download/{cpf}"
+        }
+    )
+
+# ==========================
+# Download do PDF
+# ==========================
+@app.get("/download/{cpf}")
+def download(cpf: str):
+    pdf_path = os.path.join(PDF_DIR, f"{cpf}.pdf")
+
+    if not os.path.exists(pdf_path):
+        return HTMLResponse("<h3>Arquivo não encontrado</h3>", status_code=404)
+
+    return FileResponse(
+        pdf_path,
+        media_type="application/pdf",
+        filename="informe_rendimentos.pdf"
+    )
