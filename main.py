@@ -15,7 +15,9 @@ CSV_PATH = os.path.join(BASE_DIR, "dados2.csv")
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-# ---- Carrega CSV
+# ==========================
+# Carrega dados do CSV
+# ==========================
 dados = {}
 with open(CSV_PATH, newline="", encoding="latin-1") as f:
     reader = csv.DictReader(f, delimiter=";")
@@ -26,13 +28,17 @@ with open(CSV_PATH, newline="", encoding="latin-1") as f:
             "nome": row["nome"].strip()
         }
 
-# ---- Home
+# ==========================
+# Página inicial
+# ==========================
 @app.get("/", response_class=HTMLResponse)
 def home():
     with open(os.path.join(TEMPLATE_DIR, "index.html"), encoding="utf-8") as f:
         return f.read()
 
-# ---- Consulta
+# ==========================
+# Consulta e resultado
+# ==========================
 @app.post("/consultar", response_class=HTMLResponse)
 def consultar(cpf: str = Form(...), dado: str = Form(...)):
     cpf = cpf.replace(".", "").replace("-", "").strip()
@@ -41,23 +47,18 @@ def consultar(cpf: str = Form(...), dado: str = Form(...)):
     if cpf not in dados or dados[cpf]["dado_confirmacao"] != dado:
         return HTMLResponse("<h3>Dados inválidos</h3>", status_code=403)
 
+    nome = dados[cpf]["nome"]
+
     with open(os.path.join(TEMPLATE_DIR, "resultado.html"), encoding="utf-8") as f:
         html = f.read()
 
-    html = html.replace("{{NOME}}", dados[cpf]["nome"])
-    html = html.replace("{{DOWNLOAD_URL}}", f"/download/{cpf}")
+    # ✅ LINK COMPLETO GERADO NO BACKEND
+    download_link = (
+        f'<a href="/download/{cpf}" '
+        f'class="button button-blue">Baixar informe (PDF)</a>'
+        )
+
+    html = html.replace("{{NOME}}", nome)
+    html = html.replace("{{DOWNLOAD_LINK}}", download_link)
 
     return HTMLResponse(html)
-
-# ---- Download
-@app.get("/download/{cpf}")
-def download(cpf: str):
-    pdf_path = os.path.join(PDF_DIR, f"{cpf}.pdf")
-    if not os.path.exists(pdf_path):
-        return HTMLResponse("<h3>Arquivo não encontrado</h3>", status_code=404)
-
-    return FileResponse(
-        pdf_path,
-        media_type="application/pdf",
-        filename="informe_rendimentos.pdf"
-    )
