@@ -2,7 +2,8 @@ from fastapi import FastAPI, Form, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import csv, os
+import csv
+import os
 
 app = FastAPI(title="Sistema de Informes de Rendimentos")
 
@@ -16,7 +17,9 @@ CSV_PATH = os.path.join(BASE_DIR, "dados2.csv")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATE_DIR)
 
-# ---- CSV
+# ==========================
+# Carrega dados do CSV
+# ==========================
 dados = {}
 with open(CSV_PATH, newline="", encoding="latin-1") as f:
     reader = csv.DictReader(f, delimiter=";")
@@ -27,14 +30,25 @@ with open(CSV_PATH, newline="", encoding="latin-1") as f:
             "nome": row["nome"].strip()
         }
 
-# ---- Home
+# ==========================
+# Home
+# ==========================
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request}
+    )
 
-# ---- Resultado
+# ==========================
+# Consulta
+# ==========================
 @app.post("/consultar", response_class=HTMLResponse)
-def consultar(request: Request, cpf: str = Form(...), dado: str = Form(...)):
+def consultar(
+    request: Request,
+    cpf: str = Form(...),
+    dado: str = Form(...)
+):
     cpf = cpf.replace(".", "").replace("-", "").strip()
     dado = dado.strip()
 
@@ -50,11 +64,18 @@ def consultar(request: Request, cpf: str = Form(...), dado: str = Form(...)):
         }
     )
 
-# ---- Download
+# ==========================
+# Download do PDF
+# ==========================
 @app.get("/download/{cpf}")
 def download(cpf: str):
-    path = os.path.join(PDF_DIR, f"{cpf}.pdf")
-    if not os.path.exists(path):
+    pdf_path = os.path.join(PDF_DIR, f"{cpf}.pdf")
+
+    if not os.path.exists(pdf_path):
         return HTMLResponse("<h3>Arquivo não encontrado</h3>", status_code=404)
 
-    return FileResponse(path, media_type="application/pdf", filename="informe_rendimentos.pdf")
+    return FileResponse(
+        pdf_path,
+        media_type="application/pdf",
+        filename="informe_rendimentos.pdf"
+    )
