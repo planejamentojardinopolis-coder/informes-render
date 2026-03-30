@@ -15,7 +15,9 @@ CSV_PATH = os.path.join(BASE_DIR, "dados2.csv")
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
+# ==========================
 # Carrega dados do CSV
+# ==========================
 dados = {}
 with open(CSV_PATH, newline="", encoding="latin-1") as f:
     reader = csv.DictReader(f, delimiter=";")
@@ -26,11 +28,17 @@ with open(CSV_PATH, newline="", encoding="latin-1") as f:
             "nome": row["nome"].strip()
         }
 
+# ==========================
+# Página inicial
+# ==========================
 @app.get("/", response_class=HTMLResponse)
 def home():
     with open(os.path.join(TEMPLATE_DIR, "index.html"), encoding="utf-8") as f:
         return f.read()
 
+# ==========================
+# Consulta e resultado
+# ==========================
 @app.post("/consultar", response_class=HTMLResponse)
 def consultar(cpf: str = Form(...), dado: str = Form(...)):
     cpf = cpf.replace(".", "").replace("-", "").strip()
@@ -44,11 +52,20 @@ def consultar(cpf: str = Form(...), dado: str = Form(...)):
     with open(os.path.join(TEMPLATE_DIR, "resultado.html"), encoding="utf-8") as f:
         html = f.read()
 
+    # ✅ Cria o link HTML COMPLETO no backend (evita HTML quebrado)
+    download_link = (
+        f'<a href="/download/{cpf}" '
+        f'class="button button-blue">Baixar informe (PDF)</a>'
+    )
+
     html = html.replace("{{NOME}}", nome)
-    html = html.replace("{{DOWNLOAD_URL}}", f"/download/{cpf}")
+    html = html.replace("{{DOWNLOAD_LINK}}", download_link)
 
     return HTMLResponse(html)
 
+# ==========================
+# Download do PDF
+# ==========================
 @app.get("/download/{cpf}")
 def download(cpf: str):
     pdf_path = os.path.join(PDF_DIR, f"{cpf}.pdf")
