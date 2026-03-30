@@ -14,7 +14,9 @@ PDF_DIR = os.path.join(BASE_DIR, "pdfs")
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
 CSV_PATH = os.path.join(BASE_DIR, "dados2.csv")
 
-# Garante que as pastas existam (protege contra erro 500)
+# ==========================
+# Garante que as pastas existam
+# ==========================
 os.makedirs(STATIC_DIR, exist_ok=True)
 os.makedirs(PDF_DIR, exist_ok=True)
 os.makedirs(TEMPLATE_DIR, exist_ok=True)
@@ -28,77 +30,7 @@ templates = Jinja2Templates(directory=TEMPLATE_DIR)
 dados = {}
 
 try:
-    with open(CSV_PATH, newline="", encoding="latin-1") as f:
+    with open(CSV_PATH, newline="", encoding="latin-1", errors="ignore") as f:
         reader = csv.DictReader(f, delimiter=";")
         for row in reader:
             cpf = row["cpf"].strip()
-            dados[cpf] = {
-                "dado": row["dado_confirmacao"].strip(),
-                "nome": row["nome"].strip()
-            }
-except FileNotFoundError:
-    # Evita derrubar a aplicação se o CSV não existir
-    print("⚠️ Arquivo dados2.csv não encontrado.")
-
-# ==========================
-# Health check (Render faz HEAD /)
-# ==========================
-@app.head("/")
-def healthcheck():
-    return Response(status_code=200)
-
-# ==========================
-# Home
-# ==========================
-@app.get("/", response_class=HTMLResponse)
-def home(request: Request):
-    return templates.TemplateResponse(
-        "index.html",
-        {"request": request}
-    )
-
-# ==========================
-# Consulta
-# ==========================
-@app.post("/consultar", response_class=HTMLResponse)
-def consultar(
-    request: Request,
-    cpf: str = Form(...),
-    dado: str = Form(...)
-):
-    cpf = cpf.replace(".", "").replace("-", "").strip()
-    dado = dado.strip()
-
-    if cpf not in dados or dados[cpf]["dado"] != dado:
-        return HTMLResponse(
-            "<h3>Dados inválidos</h3>",
-            status_code=403
-        )
-
-    return templates.TemplateResponse(
-        "resultado.html",
-        {
-            "request": request,
-            "nome": dados[cpf]["nome"],
-            "download_url": f"/download/{cpf}"
-        }
-    )
-
-# ==========================
-# Download do PDF
-# ==========================
-@app.get("/download/{cpf}")
-def download(cpf: str):
-    pdf_path = os.path.join(PDF_DIR, f"{cpf}.pdf")
-
-    if not os.path.exists(pdf_path):
-        return HTMLResponse(
-            "<h3>Arquivo não encontrado</h3>",
-            status_code=404
-        )
-
-    return FileResponse(
-        pdf_path,
-        media_type="application/pdf",
-        filename="informe_rendimentos.pdf"
-    )
