@@ -1,6 +1,7 @@
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 import csv
 import os
 
@@ -14,6 +15,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
 CSV_PATH = os.path.join(BASE_DIR, "dados2.csv")
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+templates = Jinja2Templates(directory=TEMPLATE_DIR)
 
 # ==========================
 # Carrega dados do CSV
@@ -29,36 +31,48 @@ with open(CSV_PATH, newline="", encoding="latin-1") as f:
         }
 
 # ==========================
-# Página inicial
+# Home
 # ==========================
 @app.get("/", response_class=HTMLResponse)
-def home():
-    with open(os.path.join(TEMPLATE_DIR, "index.html"), encoding="utf-8") as f:
-        return f.read()
+def home(request: Request):
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request}
+    )
 
 # ==========================
-# Consulta e resultado
+# Consulta
 # ==========================
 @app.post("/consultar", response_class=HTMLResponse)
-def consultar(cpf: str = Form(...), dado: str = Form(...)):
+def consultar(request: Request, cpf: str = Form(...), dado: str = Form(...)):
     cpf = cpf.replace(".", "").replace("-", "").strip()
     dado = dado.strip()
 
     if cpf not in dados or dados[cpf]["dado_confirmacao"] != dado:
         return HTMLResponse("<h3>Dados inválidos</h3>", status_code=403)
 
-    nome = dados[cpf]["nome"]
+    return templates.TemplateResponse(
+        "resultado.html",
+        {
+            "request": request,
+            "nome": dados[cpf]["nome"],
+            "download_url": f"/download/{cpf}"
+        }
+    )
 
-    with open(os.path.join(TEMPLATE_DIR, "resultado.html"), encoding="utf-8") as f:
-        html = f.read()
+# ==========================
+# Download do PDF
+# ==========================
+@app.get("/download/{cpf}")
+def download(cpf: str):
+    pdf_path = os.path.join(PDF_DIR, f"{cpf}.pdf")
 
-    # ✅ LINK COMPLETO GERADO NO BACKEND
-    download_link = (
-        f'<a href="/download/{cpf}" '
-        f'class="button button-blue">Baixar informe (PDF)</a>'
-        )
+    if not os.path.exists(pdf_path):
+        return HTMLResponse("<h3>Arquivo não encontrado</h3>", status_code=404)
 
-    html = html.replace("{{NOME}}", nome)
-    html = html.replace("{{DOWNLOAD_LINK}}", download_link)
-
-    return HTMLResponse(html)
+    return FileResponse(
+        pdf_path,
+        media_type="application/pdf",
+        filename="informe_rendimentos.pdf"
+    )
+``
